@@ -110,6 +110,17 @@ def drawCircle(xi, yi, r, color):
 
 # Other derivative algorithms for conveniently drawing other shapes based on the algorithms above
 
+def drawFilledCircle(xi, yi, r, color):
+    glColor3f(*color)
+    glBegin(GL_POINTS)
+    for y in range(-r, r + 1):
+        # Calculate the x-coordinate range for the current y-level
+        x_max = int((r**2 - y**2) ** 0.5)  # x-coordinate based on circle equation x^2 + y^2 = r^2
+        for x in range(-x_max, x_max + 1):
+            glVertex2f(x + xi, y + yi)
+    glEnd()
+
+
 def drawFilledRectangle(x1, y1, x2, y2, color):
     if x1 > x2:
         x1, x2 = x2, x1
