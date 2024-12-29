@@ -9,7 +9,7 @@ from userinferface import Button
 from screens import play_action, help_action, shop_action
 from shared import buttons, hovered_button_index, pressed_button_index, showScreen, W_Width, W_Height, current_screen
 from character import drawCharacter
-from controls import passiveMouseListener, mouseListener, specialKeyListener
+from controls import passiveMouseListener, mouseListener, keyboardListener
 
 
 def iterate():
@@ -31,7 +31,7 @@ window = glutCreateWindow(b"Zen G - CSE423 Project Group 12")
 glutDisplayFunc(showScreen)
 glutMouseFunc(mouseListener)
 glutPassiveMotionFunc(passiveMouseListener)
-glutSpecialFunc(specialKeyListener)
+glutKeyboardFunc(keyboardListener)
 
 # Where it all begins
 glutMainLoop()

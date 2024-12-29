@@ -1,149 +1,59 @@
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
-import random
-from shared import W_Width, W_Height, showScreen
+import math
+from shared import W_Width, W_Height, showScreen, buttons
 from character import drawCharacter
+from algorithms import drawText, drawCircle, drawLine, drawFilledCircle
 
-# Global variables
-player_position = [W_Width // 2, W_Height // 2]
-player_size = 20
-player_speed = 5
-bullets = []
-zombies = []
-zombie_speed = 2
-tile_size = 40
-world = []
-mouse_position = [0, 0]
+# Game state
+mouse_x, mouse_y = 0, 0
+character_x, character_y = W_Width // 2, W_Height // 2
+bullets = []  # List to store active bullets
 
-# Initialize the world with random tiles
-def generate_world():
-    global world
-    cols = W_Width // tile_size
-    rows = W_Height // tile_size
-    world = [[random.choice([0, 1]) for _ in range(cols)] for _ in range(rows)]
+# Function to update and render the game screen
+def game_screen():
+    global bullets
+    
+    buttons.clear()
 
-def draw_world():
-    for row_idx, row in enumerate(world):
-        for col_idx, tile in enumerate(row):
-            if tile == 1:  # Draw a solid tile
-                x = col_idx * tile_size
-                y = row_idx * tile_size
-                glColor3f(0.5, 0.5, 0.5)
-                glBegin(GL_QUADS)
-                glVertex2f(x, y)
-                glVertex2f(x + tile_size, y)
-                glVertex2f(x + tile_size, y + tile_size)
-                glVertex2f(x, y + tile_size)
-                glEnd()
+    # Draw character facing the mouse
+    dx = mouse_x - character_x
+    dy = mouse_y - character_y
+    angle = math.atan2(dy, dx)
 
-# Handle player movement
-def move_player(keys):
-    if b'w' in keys:
-        player_position[1] += player_speed
-    if b's' in keys:
-        player_position[1] -= player_speed
-    if b'a' in keys:
-        player_position[0] -= player_speed
-    if b'd' in keys:
-        player_position[0] += player_speed
+    drawCharacter(character_x, character_y)
 
-    # Keep player within bounds
-    player_position[0] = max(0, min(player_position[0], W_Width - player_size))
-    player_position[1] = max(0, min(player_position[1], W_Height - player_size))
+    # Draw cursor at the mouse position
+    drawCircle(mouse_x, mouse_y, 5, (1.0, 1.0, 0.0))
 
-# Draw bullets
-def draw_bullets():
-    glColor3f(1, 1, 0)
-    for bullet in bullets:
-        glBegin(GL_QUADS)
-        glVertex2f(bullet[0] - 5, bullet[1] - 5)
-        glVertex2f(bullet[0] + 5, bullet[1] - 5)
-        glVertex2f(bullet[0] + 5, bullet[1] + 5)
-        glVertex2f(bullet[0] - 5, bullet[1] + 5)
-        glEnd()
+    # Update and draw bullets
+    new_bullets = []
+    for bx, by, tx, ty in bullets:
+        bullet_speed = 15
+        direction_x = tx - bx
+        direction_y = ty - by
+        distance = math.sqrt(direction_x**2 + direction_y**2)
+        direction_x /= distance
+        direction_y /= distance
 
-# Draw zombies
-def draw_zombies():
-    glColor3f(1, 0, 0)
-    for zombie in zombies:
-        glBegin(GL_QUADS)
-        glVertex2f(zombie[0] - 15, zombie[1] - 15)
-        glVertex2f(zombie[0] + 15, zombie[1] - 15)
-        glVertex2f(zombie[0] + 15, zombie[1] + 15)
-        glVertex2f(zombie[0] - 15, zombie[1] + 15)
-        glEnd()
+        bx += direction_x * bullet_speed
+        by += direction_y * bullet_speed
 
-# Update bullets
-def update_bullets():
-    for bullet in bullets[:]:
-        bullet[0] += bullet[2] * 10
-        bullet[1] += bullet[3] * 10
-        if bullet[0] < 0 or bullet[0] > W_Width or bullet[1] < 0 or bullet[1] > W_Height:
-            bullets.remove(bullet)
+        # If the bullet is within the screen bounds, keep it
+        if 0 <= bx <= W_Width and 0 <= by <= W_Height:
+            new_bullets.append((bx, by, tx, ty))
 
-# Update zombies
-def update_zombies():
-    for zombie in zombies:
-        dx = player_position[0] - zombie[0]
-        dy = player_position[1] - zombie[1]
-        dist = (dx**2 + dy**2)**0.5
-        if dist > 0:
-            zombie[0] += zombie_speed * dx / dist
-            zombie[1] += zombie_speed * dy / dist
+            # Draw the bullet
+            drawFilledCircle(bx, by, 5, (1.0, 1.0, 0.0))
 
-# Mouse callback
-def mouse_motion(x, y):
-    global mouse_position
-    mouse_position = [x, W_Height - y]
+            # Draw the gun flash effect (optional)
+            if bx == character_x and by == character_y:
+                drawFilledCircle(character_x - 40, character_y, 10, (1.0, 0.5, 0.0))
 
-# Mouse click callback
-def mouse_click(button, state, x, y):
-    if button == GLUT_LEFT_BUTTON and state == GLUT_DOWN:
-        dx = mouse_position[0] - player_position[0]
-        dy = mouse_position[1] - player_position[1]
-        dist = (dx**2 + dy**2)**0.5
-        if dist > 0:
-            bullets.append([player_position[0], player_position[1], dx / dist, dy / dist])
+    bullets = new_bullets
 
-# Keyboard callback
-def keyboard_down(key, x, y):
-    keys_down.add(key)
-
-def keyboard_up(key, x, y):
-    keys_down.discard(key)
-
-# Main display function
-def display():
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-    glLoadIdentity()
-
-    draw_world()
-    drawCharacter(player_position[0], player_position[1], player_size)
-    draw_bullets()
-    draw_zombies()
+    # Draw the score
+    drawText(f"Score: {len(bullets)}", 10, W_Height - 30, (1.0, 1.0, 1.0), 0.2)
 
     glutSwapBuffers()
-
-# Timer function
-def update(value):
-    move_player(keys_down)
-    update_bullets()
-    update_zombies()
-    glutPostRedisplay()
-    glutTimerFunc(16, update, 0)
-
-# Initialize game screen
-def game_screen():
-    global keys_down
-    keys_down = set()
-    generate_world()
-
-    glutDisplayFunc(display)
-    glutKeyboardFunc(keyboard_down)
-    glutKeyboardUpFunc(keyboard_up)
-    glutMouseFunc(mouse_click)
-    glutPassiveMotionFunc(mouse_motion)
-    glutTimerFunc(16, update, 0)
-
-    showScreen()

@@ -21,9 +21,6 @@ hovered_button_index, pressed_button_index = -1, -1
 def play_action():
     global buttons
     buttons.clear()  # Clear buttons from the menu screen
-    # glutMouseFunc(mouseListener2)
-    # glutPassiveMotionFunc(passiveMouseListener2)
-    # glutSpecialFunc(specialKeyListener2)
     glutDisplayFunc(play_screen)
     glutPostRedisplay()
 
@@ -64,8 +61,7 @@ def play_screen():
     buttons.clear()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     
-    drawText("Game", W_Width//2 - 50, W_Height//2, (1.0, 1.0, 1.0), 0.5)
-    ## game_screen()
+    game_screen()
     
     glutSwapBuffers()
 
@@ -83,45 +79,3 @@ def right_screen():
         button.draw()
 
     glutSwapBuffers()
-
-
-'''I/O related functions'''
-def mouseListener2(button, state, x, y):
-    global buttons, pressed_button_index
-    y = W_Height - y  # Invert y-coordinate for OpenGL
-
-    if button == GLUT_LEFT_BUTTON:
-        if state == GLUT_DOWN:
-            for index, button_obj in enumerate(buttons):  # Only check active buttons
-                if button_obj.left <= x <= button_obj.left + button_obj.width and \
-                        button_obj.bottom <= y <= button_obj.bottom + button_obj.height:
-                    button_obj.is_pressed = True
-                    pressed_button_index = index
-                    print(f"Button '{button_obj.label}' pressed!")
-        elif state == GLUT_UP:
-            if pressed_button_index != -1:
-                buttons[pressed_button_index].is_pressed = False
-                print(f"Button '{buttons[pressed_button_index].label}' released!")
-
-                if buttons[pressed_button_index].label in [">", "<"]:  # Back buttons
-                    glutDisplayFunc(showScreen)
-                    glutMouseFunc(None)
-                    # glutPassiveMotionFunc(None)
-                    # glutSpecialFunc(None)
-                    glutPostRedisplay()
-
-                pressed_button_index = -1
-
-    glutPostRedisplay()
-
-
-def specialKeyListener2(key, x, y):
-    if key=='w':
-        print("Moving North")
-    if key=='a':
-        print("Moving West")
-    if key== 's':
-        print("Moving South")
-    if key== 'd':
-        print("Moving East")
-    glutPostRedisplay()

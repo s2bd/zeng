@@ -55,7 +55,7 @@ def showScreen():
     drawText("ZenG", W_Width//2 - 150, W_Height//2 + 250, (0.1, 1.0, 0.1), 1.00)  # Title
     drawText("423 Group12", W_Width//2 - 70, W_Height//2 + 280, (0.5, 0.5, 0.5), 0.15)  # Subtitle
 
-    drawCharacter(W_Width//2, W_Height//2)
+    drawCharacter(W_Width//2, W_Height//2, 2)
 
     # Render buttons
     for button in buttons:
