@@ -12,10 +12,11 @@ except:
     print("window.config file not found!")
 windowConfig = windowConfigFile.readlines()
 windowConfigFile.close()
-W_Width, W_Height = int(windowConfig[0]), int(windowConfig[1])
 
-# Global variables for shared use
+'''Global variables/constants'''
+W_Width, W_Height = int(windowConfig[0]), int(windowConfig[1])
 buttons = []
+hovered_button_index, pressed_button_index = -1, -1
 current_screen = 0  # 0: Menu, 1: Help, 2: Shop, 3: Game
 
 
@@ -41,7 +42,7 @@ def showScreen():
     global buttons, W_Width, W_Height
     buttons.clear()  # Clear existing buttons
     setup_buttons()  # Reconfigure buttons for the menu screen
-    glClearColor(0.08, 0.08, 0.08, 0.0)
+    glClearColor(0.18, 0.18, 0.18, 0.0)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()
     glViewport(0, 0, W_Width, W_Height)

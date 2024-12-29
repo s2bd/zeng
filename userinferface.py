@@ -34,3 +34,5 @@ class Button:
         text_x = self.left + self.width // 2 - (len(self.label) * self.label_size * 6) // 2 + self.label_offset
         text_y = 10 + bottom + self.height // 2 - self.label_size * 10 // 2
         drawText(self.label, text_x, text_y, text_color, self.label_size)
+
+        glutPostRedisplay()

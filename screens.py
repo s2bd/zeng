@@ -5,6 +5,7 @@ from algorithms import drawLine, drawCircle, drawFilledCircle, drawFilledRectang
 from userinferface import Button
 from character import drawCharacter
 from shared import showScreen, buttons, W_Width, W_Height
+from game import game_screen
 
 try:
     windowConfigFile = open('window.config','r')
@@ -45,7 +46,10 @@ def left_screen():
     buttons.clear()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     
-    drawText("Help", W_Width//2 - 50, W_Height//2, (1.0, 1.0, 1.0), 0.5)
+    drawText("Help", W_Width//2 - 180, W_Height - 50, (1.0, 1.0, 1.0), 0.5)
+    drawText("Move using W,A,S,D", W_Width//2 - 180, W_Height - 100, (0.9, 0.9, 0.9), 0.16)
+    drawText("Aim & shoot using the mouse", W_Width//2 - 180, W_Height - 120, (0.9, 0.9, 0.9), 0.16)
+    drawText("Survive as long as you can!", W_Width//2 - 180, W_Height - 140, (0.9, 0.9, 0.9), 0.16)
 
     back_button_x = (W_Width - 180) // 2 + 200
     buttons.append(Button(back_button_x, 50, 80, 100, ">", label_offset=-20))
@@ -61,6 +65,7 @@ def play_screen():
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     
     drawText("Game", W_Width//2 - 50, W_Height//2, (1.0, 1.0, 1.0), 0.5)
+    ## game_screen()
     
     glutSwapBuffers()
 
@@ -68,7 +73,8 @@ def play_screen():
 def right_screen():
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
-    drawText("Shop", W_Width//2 - 50, W_Height//2, (1.0, 1.0, 1.0), 0.5)
+    drawText("Shop", W_Width//2 - 180, W_Height - 50, (1.0, 1.0, 1.0), 0.5)
+    drawText("Coming Soon", W_Width//2 - 150, W_Height//2, (0.9, 0.001, 0.001), 0.25)
 
     back_button_x = (W_Width - 180) // 2 - 100
     buttons.append(Button(back_button_x, 50, 80, 100, "<", label_offset=-20))
