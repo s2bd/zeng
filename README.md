@@ -15,12 +15,9 @@ A zombie survival game built on Python and OpenGL for a CSE423 project
 ✅ Main menu screen
 ✅ Multiple screens (Help, Shop, Game)
 ✅ Interactive UI elements (i.e. buttons)
-⏳ Game initialization
-⏳ Player and enemy spawning
-⏳ Random world generation
-⏳ In-game currency
-⏳ In-game upgrades/weapons
-⏳ Progress saving/loading to file
+✅ Game initialization
+✅ Player and enemy spawning
+✅ Progress saving/loading to file
 
 (more may be added later)
 ```
